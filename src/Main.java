@@ -18,6 +18,10 @@ class Node<T> {
 class MyLinkedList<T> implements Iterable<T> {
     private Node<T> start = null;
     private Node<T> end = null;
+    int size = 0;
+    public int size() {
+        return size;
+    }
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
@@ -45,6 +49,7 @@ class MyLinkedList<T> implements Iterable<T> {
     MyLinkedList(Node node) {
         start = node;
         end = node;
+        size++;
     }
     public void add (T added) {
         if(start==null) {
@@ -56,43 +61,33 @@ class MyLinkedList<T> implements Iterable<T> {
             end.next = newNode;
             end = newNode;
         }
+        size++;
     }
-    public void getIndex(int index) {
-        if(start==null) System.out.println("null");
-        Node pointer = start;
+    public T getIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node<T> pointer = start;
         for(int i = 0; i < index; i++) {
-            if(pointer.next == null) System.out.println("null");
             pointer = pointer.next;
         }
-        System.out.println(pointer.data);
+        return pointer.data;
     }
     public void delete(int index) {
         Node pointer = start;
-        for(int i = 0; i < index; i++) {
-            if(pointer.next==null) System.out.println("인덱스가 존재하지 않음");
-            pointer = pointer.next;
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
         }
-        // 첫 번째 원소일 경우
-        if(pointer.prev==null) {
-            if(pointer.next==null) {
-                start=null;
-                end=null;
-                return;
+        if (index == 0) {
+            start = start.next;
+        } else {
+            Node<T> current = start;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
             }
-            else {
-                start = pointer.next;
-                pointer = pointer.next;
-            }
+            current.next = current.next.next;
         }
-        // 마지막 원소일 경우
-        if(pointer.next==null) {
-            pointer.prev.next = null;
-            end = pointer.prev;
-            return;
-        }
-        //중간일 경우
-        pointer.prev.next = pointer.next;
-        pointer.next.prev = pointer.prev;
+        size--;
     }
     public void peek() {
         if(end==null) System.out.println("null");
@@ -109,6 +104,54 @@ class MyLinkedList<T> implements Iterable<T> {
         }
     }
 }
+class MyQueue<T> {
+    private MyLinkedList<T> list = new MyLinkedList<>();
+
+    public void enqueue(T data) {
+        list.add(data);
+    }
+
+    public T dequeue() {
+        if (list.size() == 0) {
+            throw new NoSuchElementException();
+        }
+        T data = list.getIndex(0);
+        list.delete(0);
+        return data;
+    }
+
+    public int size() {
+        return list.size();
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+}
+class MyStack<T> {
+    private MyLinkedList<T> list = new MyLinkedList<>();
+
+    public void push(T data) {
+        list.add(data);
+    }
+
+    public T pop() {
+        if (list.size() == 0) throw new NoSuchElementException();
+        T data = list.getIndex(list.size() - 1);
+        list.delete(list.size() - 1);
+        return data;
+    }
+
+    public int size() {
+        return list.size();
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+}
+
+
 public class Main {
     public static void main(String[] args) {
         Node node1 = new Node("string");
@@ -121,12 +164,27 @@ public class Main {
         my.add(2);
         my.delete(1);
         my.add(1);
-        my.getIndex(0);
-        my.getIndex(1);
-        my.getIndex(2);
-        my.getIndex(3);
+        System.out.println(my.getIndex(0));
+        System.out.println(my.getIndex(1));
+        System.out.println(my.getIndex(2));
+        System.out.println(my.getIndex(3));
         for(int now : my) {
             System.out.println(now);
         }
+        MyQueue<String> queue = new MyQueue<>();
+        queue.enqueue("안녕");
+        queue.enqueue("하세");
+        queue.enqueue("요");
+        System.out.println(queue.dequeue());
+        System.out.println(queue.dequeue());
+        System.out.println(queue.dequeue());
+
+        MyStack<String> stack = new MyStack<>();
+        stack.push("스택");
+        stack.push("테스트");
+        stack.push("321");
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
     }
 }
