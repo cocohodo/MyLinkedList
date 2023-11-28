@@ -63,7 +63,7 @@ class MyLinkedList<T> implements Iterable<T> {
         }
         size++;
     }
-    public T getIndex(int index) {
+    public T get(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }
@@ -115,7 +115,7 @@ class MyQueue<T> {
         if (list.size() == 0) {
             throw new NoSuchElementException();
         }
-        T data = list.getIndex(0);
+        T data = list.get(0);
         list.delete(0);
         return data;
     }
@@ -137,7 +137,7 @@ class MyStack<T> {
 
     public T pop() {
         if (list.size() == 0) throw new NoSuchElementException();
-        T data = list.getIndex(list.size() - 1);
+        T data = list.get(list.size() - 1);
         list.delete(list.size() - 1);
         return data;
     }
@@ -164,10 +164,10 @@ public class Main {
         my.add(2);
         my.delete(1);
         my.add(1);
-        System.out.println(my.getIndex(0));
-        System.out.println(my.getIndex(1));
-        System.out.println(my.getIndex(2));
-        System.out.println(my.getIndex(3));
+        System.out.println(my.get(0));
+        System.out.println(my.get(1));
+        System.out.println(my.get(2));
+        System.out.println(my.get(3));
         for(int now : my) {
             System.out.println(now);
         }
