@@ -1,5 +1,6 @@
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 class Node<T> {
     T data;
@@ -14,36 +15,41 @@ class Node<T> {
         this.data = data;
     }
 }
-class MyLinkedList <T> implements Iterator {
-    private Node start = null;
-    private Node end = null;
-    private Node pointer = null;
+class MyLinkedList<T> implements Iterable<T> {
+    private Node<T> start = null;
+    private Node<T> end = null;
     @Override
-    public boolean hasNext() {
-        if(pointer.next != null) return true;
-        return false;
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private Node<T> current = start;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                T data = current.data;
+                current = current.next;
+                return data;
+            }
+        };
     }
-    @Override
-    public Node next() {
-        if(pointer.next == null) return null;
-        pointer = pointer.next;
-        return pointer;
-    }
+
     MyLinkedList() {
-        start = null;
-        end = null;
-        pointer = null;
     }
     MyLinkedList(Node node) {
         start = node;
         end = node;
-        pointer = node;
     }
     public void add (T added) {
         if(start==null) {
             start = new Node(added,null,null);
             end = start;
-            pointer = start;
         }
         else {
             Node newNode = new Node(added,end,null);
@@ -88,18 +94,28 @@ class MyLinkedList <T> implements Iterator {
         pointer.prev.next = pointer.next;
         pointer.next.prev = pointer.prev;
     }
-    public void getLast() {
+    public void peek() {
         if(end==null) System.out.println("null");
         System.out.println(end.data);
+    }
+    public void pop() {
+        System.out.println(end.data);
+        if(end.prev==null) {
+            start = null;
+            end = null;
+        }
+        else {
+            end = end.prev;
+        }
     }
 }
 public class Main {
     public static void main(String[] args) {
         Node node1 = new Node("string");
         Node node2 = new Node(true);
-        Node node3 = new Node(3);
+        Node node3 = new Node(10);
         Node node4 = new Node(4);
-        MyLinkedList my = new MyLinkedList(node1);
+        MyLinkedList<Integer> my = new MyLinkedList(node3);
         my.add(4);
         my.add(3);
         my.add(2);
@@ -109,5 +125,8 @@ public class Main {
         my.getIndex(1);
         my.getIndex(2);
         my.getIndex(3);
+        for(int now : my) {
+            System.out.println(now);
+        }
     }
 }
